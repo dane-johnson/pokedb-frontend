@@ -8,7 +8,7 @@
 
 (defn place-rand-poke
   []
-  [(rand-int 400) (rand-int (.-innerWidth js/window)) (- (rand-int (.-innerHeight js/window)))])
+  [(rand-int 600) (rand-int (.-innerWidth js/window)) (- (rand-int (.-innerHeight js/window)))])
 
 (def pokemons (atom (vec (repeatedly num-pokes place-rand-poke))))
 
@@ -16,7 +16,7 @@
   [poke]
   (if (> (poke 2) (+ (.-innerHeight js/window) 100))
     (place-rand-poke)
-    (update poke 2 (partial + 10))))
+    (update poke 2 (partial + 5))))
 
 (defn update-pokes!
   []
@@ -42,9 +42,9 @@
   []
   (do
     (update-pokes!)
-    (js/setTimeout animate 50)))
+    (js/setTimeout animate 10)))
 
-(js/setTimeout animate 50)
+(js/setTimeout animate 10)
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
