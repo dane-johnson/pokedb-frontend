@@ -28,7 +28,7 @@
 
 (defn poke-div
   []
-  [:div {:style {:position "absolute" :top 0 :left 0}}
+  [:div {:style {:position "absolute" :top 0 :left 0 :z-index -1}}
    (map-indexed #(with-meta (apply pokemon-img %2) {:key %1}) @pokemons)])
 
 (defn scrolling-pokes []

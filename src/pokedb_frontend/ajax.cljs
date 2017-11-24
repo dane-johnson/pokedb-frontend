@@ -1,15 +1,18 @@
 (ns pokedb-frontend.ajax
-  (:require [ajax.core :refer [GET PUT]]))
+  (:require [ajax.core :refer [GET PUT]]
+            [reagent.core :as reagent :refer [atom]]))
 
 (def ^:dynamic *api-url* "http://localhost:5000")
 
+(def trainers (atom (list)))
+
 (defn trainers-handler
   [res]
-  (print (first (cljs.reader/read-string res))))
+  (reset! trainers (cljs.reader/read-string res)))
 
 (defn trainers-error-handler
   [err]
-  (print err))
+  (print "I am in error"))
 
 (defn get-trainers
   []
