@@ -1,29 +1,46 @@
 (ns pokedb-frontend.ajax
-  (:require [ajax.core :refer [GET PUT]]
+  (:require [ajax.core :refer [GET PUT DELETE]]
             [reagent.core :as reagent :refer [atom]]))
 
 (def ^:dynamic *api-url* "http://localhost:5000")
 
+(defn atom-handler
+  [a key]
+  (fn [res]
+    (reset! a (let [vals (cljs.reader/read-string res)]
+                (zipmap (map #(get % key) vals) vals)))))
+
+(defn atom-getter
+  [endpoint handler]
+  (fn []
+    (GET (str *api-url* endpoint)
+         {:handler handler})))
+
+;;;;;;;;;; TRAINERS ;;;;;;;;;;
+
 (def trainers (atom {}))
 
-(defn trainers-handler
-  [res]
-  (reset! trainers
-          (let [ts (cljs.reader/read-string res)]
-            (zipmap (map #(get % :number) ts) ts))))
+(def trainers-handler (atom-handler trainers :number))
 
-(defn trainers-error-handler
-  [err]
-  (print "I am in error"))
-
-(defn get-trainers
-  []
-  (GET (str *api-url*  "/trainers")
-       {:handler trainers-handler
-        :error-handler trainers-error-handler}))
+(def get-trainers (atom-getter "/trainers" trainers-handler))
 
 (defn set-age
   [no age]
   (PUT (str *api-url* "/trainer/" no)
        {:params {:age age}
         :format :raw}))
+
+;;;;;;;;;; POKEMON ;;;;;;;;;;
+
+(def pokemons (atom {}))
+
+(def pokemons-handler (atom-handler pokemons :number))
+
+(defn get-pokemons
+  [no]
+  (GET (str *api-url* "/pokemon/" no)
+       {:handler pokemons-handler}))
+
+(defn delete-pokemon
+  [no]
+  (DELETE (str *api-url* "/pokemon/" no)))
