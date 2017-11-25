@@ -4,11 +4,13 @@
 
 (def ^:dynamic *api-url* "http://localhost:5000")
 
-(def trainers (atom (list)))
+(def trainers (atom {}))
 
 (defn trainers-handler
   [res]
-  (reset! trainers (cljs.reader/read-string res)))
+  (reset! trainers
+          (let [ts (cljs.reader/read-string res)]
+            (zipmap (map #(get % :number) ts) ts))))
 
 (defn trainers-error-handler
   [err]
@@ -19,3 +21,9 @@
   (GET (str *api-url*  "/trainers")
        {:handler trainers-handler
         :error-handler trainers-error-handler}))
+
+(defn set-age
+  [no age]
+  (PUT (str *api-url* "/trainer/" no)
+       {:params {:age age}
+        :format :raw}))
