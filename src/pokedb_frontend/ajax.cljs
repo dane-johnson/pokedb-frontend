@@ -44,3 +44,12 @@
 (defn delete-pokemon
   [no]
   (DELETE (str *api-url* "/pokemon/" no)))
+
+;;;;;;;;;; SPECIES ;;;;;;;;;;
+
+(def species (atom {}))
+
+(def species-handler (atom-handler species :name))
+
+(def get-species (atom-getter "/species" species-handler))
+

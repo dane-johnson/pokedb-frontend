@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [pokedb-frontend.ajax :refer [trainers get-trainers set-age
                                           pokemons get-pokemons delete-pokemon]]
-            [pokedb-frontend.background :refer [scrolling-pokes]]))
+            [pokedb-frontend.background :refer [scrolling-pokes]]
+            [pokedb-frontend.add-pokemon :refer [selected-trainer add-pokemon-modal]]))
 
 (enable-console-print!)
 (get-trainers)
@@ -26,7 +27,12 @@
                        :on-change on-age-change}]
               [:button {:class "btn btn-primary"
                         :on-click #(get-pokemons number)}
-               "Show Pokemon"]]
+               "Show Pokemon"]
+              [:button {:class "btn btn-primary"
+                        :data-toggle "modal"
+                        :data-target "#add-pokemon-modal"
+                        :on-click #(reset! selected-trainer number)}
+               "Add Pokemon"]]
     {:key number}))
 
 (defn trainers-view []
@@ -54,7 +60,7 @@
   [:div.container-fluid [:div.row children]])
 
 (defn page []
-  [:div [scrolling-pokes] [foreground [trainers-view] [pokemons-view]]])
+  [:div [scrolling-pokes] [foreground [trainers-view] [pokemons-view] [add-pokemon-modal]]])
 
 (reagent/render-component [page]
                           (. js/document (getElementById "app")))
