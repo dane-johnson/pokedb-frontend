@@ -1,5 +1,5 @@
 (ns pokedb-frontend.ajax
-  (:require [ajax.core :refer [GET PUT DELETE]]
+  (:require [ajax.core :refer [GET PUT DELETE POST]]
             [reagent.core :as reagent :refer [atom]]))
 
 (def ^:dynamic *api-url* "http://localhost:5000")
@@ -44,6 +44,12 @@
 (defn delete-pokemon
   [no]
   (DELETE (str *api-url* "/pokemon/" no)))
+
+(defn add-pokemon
+  [data]
+  (POST (str *api-url* "/pokemon")
+        {:params data
+         :format :raw}))
 
 ;;;;;;;;;; SPECIES ;;;;;;;;;;
 
