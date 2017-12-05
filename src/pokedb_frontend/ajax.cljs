@@ -51,6 +51,20 @@
         {:params data
          :format :raw}))
 
+(def winloss (atom {}))
+
+(defn winloss-handler
+  [res]
+  (reset! winloss (first (cljs.reader/read-string res))))
+
+(defn get-win-loss
+  [number speciesname]
+  (GET (str *api-url* "/winloss")
+       {:handler winloss-handler
+        :params {:number number
+                 :speciesname speciesname}
+        :format :raw}))
+
 ;;;;;;;;;; SPECIES ;;;;;;;;;;
 
 (def species (atom {}))
@@ -58,4 +72,3 @@
 (def species-handler (atom-handler species :name))
 
 (def get-species (atom-getter "/species" species-handler))
-

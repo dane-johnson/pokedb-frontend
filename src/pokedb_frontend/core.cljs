@@ -1,7 +1,8 @@
 (ns pokedb-frontend.core
   (:require [reagent.core :as reagent :refer [atom]]
             [pokedb-frontend.ajax :refer [trainers get-trainers set-age
-                                          pokemons get-pokemons delete-pokemon]]
+                                          pokemons get-pokemons delete-pokemon
+                                          get-win-loss winloss]]
             [pokedb-frontend.background :refer [scrolling-pokes]]
             [pokedb-frontend.add-pokemon :refer [selected-trainer add-pokemon-modal]]))
 
@@ -44,23 +45,40 @@
     (delete-pokemon no)
     (swap! pokemons dissoc no)))
 
+(defn update-win-loss
+  [number]
+  (get-win-loss number (:speciesname (@pokemons number))))
+
 (defn pokemons-div
   [[number p]]
   (with-meta [:p (or (:nickname p) (:speciesname p))
               [:button {:class "btn btn-danger"
                         :on-click #(on-delete-pokemon number)}
-                                   "Delete"]]
+               "Delete"]
+              [:button {:class "btn btn-primary"
+                        :on-click #(update-win-loss number)}
+               "Show Win-Loss"]]
     {:key number}))
 
 (defn pokemons-view []
   [:div.col-sm (map pokemons-div @pokemons)])
+
+(defn winloss-div
+  [{:keys [wins losses]}]
+  [:div
+   [:p "Wins : Losses"]
+   [:p wins ":" losses]])
+
+(defn winloss-view
+  []
+  [:div.col-sm-1 [winloss-div @winloss]])
 
 (defn foreground
   [& children]
   [:div.container-fluid [:div.row children]])
 
 (defn page []
-  [:div [scrolling-pokes] [foreground [trainers-view] [pokemons-view] [add-pokemon-modal]]])
+  [:div [scrolling-pokes] [foreground [trainers-view] [pokemons-view] [winloss-view] [add-pokemon-modal]]])
 
 (reagent/render-component [page]
                           (. js/document (getElementById "app")))
