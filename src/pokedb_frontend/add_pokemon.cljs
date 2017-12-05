@@ -26,7 +26,9 @@
 (defn on-add-pokemon
   []
   (do
-    (add-pokemon (assoc @new-pokemon-info :trainernumber @selected-trainer))
+    (if (= (set (keys @new-pokemon-info)) #{:speciesname :nickname :attack :defense})
+      (add-pokemon (assoc @new-pokemon-info :trainernumber @selected-trainer))
+      (js/alert "Error, please enter all data."))
     (js/setTimeout #(get-pokemons @selected-trainer) 2000)))
 
 (defn add-pokemon-modal
